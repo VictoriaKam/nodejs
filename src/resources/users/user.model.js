@@ -1,4 +1,4 @@
-const { v4: uuid } = require('../../../node_modules/uuid');
+const { v4: uuid } = require('uuid');
 
 class User {
   constructor({
