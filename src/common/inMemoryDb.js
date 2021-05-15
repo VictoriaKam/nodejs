@@ -103,12 +103,14 @@ const createTask = async (boardId, task) => {
 const updateTask = async (boardId, taskId, task) => {
   const taskOld = DB.Tasks.filter(el => el.boardId === boardId).filter(elTask => elTask.id === taskId)[0];
   const taskIndex = DB.Tasks.indexOf(taskOld);
-  DB.Tasks[taskIndex].title = task.title;
-  DB.Tasks[taskIndex].order = task.order;
-  DB.Tasks[taskIndex].description = task.description;
-  DB.Tasks[taskIndex].userId = task.userId;
-  DB.Tasks[taskIndex].boardId = task.boardId;
-  DB.Tasks[taskIndex].columnId = task.columnId;
+  if (DB.Tasks[taskIndex]) {
+    DB.Tasks[taskIndex].title = task.title;
+    DB.Tasks[taskIndex].order = task.order;
+    DB.Tasks[taskIndex].description = task.description;
+    DB.Tasks[taskIndex].userId = task.userId;
+    DB.Tasks[taskIndex].boardId = task.boardId;
+    DB.Tasks[taskIndex].columnId = task.columnId;
+  };
   return DB.Tasks[taskIndex];
 }
 
