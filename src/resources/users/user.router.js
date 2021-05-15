@@ -25,12 +25,13 @@ router.route('/').post(async (req, res) => {
     })
   );
 
+  res.status(201);
   res.json(User.toResponse(user));
 });
 
 router.route('/:id').put(async (req, res) => {
   try {
-    const user = await usersService.update(req.params.id, 
+    const user = await usersService.update(req.params.id,
       {
         login: req.body.login,
         password: req.body.password,

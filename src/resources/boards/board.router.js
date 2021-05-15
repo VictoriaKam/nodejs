@@ -24,6 +24,7 @@ router.route('/').post(async (req, res) => {
     })
   );
 
+  res.status(201);
   res.json(Board.toResponse(board));
 });
 
