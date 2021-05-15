@@ -9,17 +9,15 @@ const DB = {
   removeTasksOfRemovedBoard: board => {
     if (board) {
       DB.Tasks.filter(task => task && task.boardId === board.id).forEach(
-        // eslint-disable-next-line no-return-assign
         task => (DB.Tasks.splice(DB.Tasks.indexOf(task),1))
       );
     }
   },
   updateTaskForDeletedUser: user => {
     if (user) {
-      DB.Tasks.filter(task => task).forEach(task => {
-        // eslint-disable-next-line no-param-reassign
-        task.userId = task.userId === user.id ? null : task.userId;
-      });
+      DB.Tasks = DB.Tasks.map(task =>
+        task.userId === user.id ? { ...task, userId: null } : { ...task }
+      );
     }
   }
 }
