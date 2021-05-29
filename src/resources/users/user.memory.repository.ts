@@ -1,11 +1,13 @@
-const DB = require('../../common/inMemoryDb');
+import {IUser} from '../../types/interfaces';
+
+import * as DB from '../../common/inMemoryDb';
 
 /**
  * Represents all existing users.
  * @async
  * @returns {Array.<object>} all users.
  */
-const getAll = async () => DB.getAllUsers();
+const getAll = async (): Promise<Array<IUser>> => DB.getAllUsers();
 
 /**
  * Retrieves a user by id.
@@ -13,7 +15,7 @@ const getAll = async () => DB.getAllUsers();
  * @param {String} id - User id
  * @returns {User} User object.
  */
-const get = async id => {
+const get = async (id: string): Promise<IUser | never> => {
   const user = await DB.getUser(id);
 
   if (!user) {
@@ -29,7 +31,7 @@ const get = async id => {
  * @param {User.<string>} User object.
  * @returns {User.<string>} newly created User object.
  */
-const create = async user => DB.createUser(user);
+const create = async (user: IUser): Promise<IUser> => DB.createUser(user);
 
 /**
  * Updates a user with a specific id.
@@ -38,7 +40,7 @@ const create = async user => DB.createUser(user);
  * @param {User} User - User object with new values.
  * @returns {User} updated User object.
  */
-const update = async (id, user) => DB.updateUser(id, user);
+const update = async (id: string, user: IUser): Promise<IUser> => DB.updateUser(id, user);
 
 /**
  * Deletes a user with a specific id.
@@ -46,6 +48,14 @@ const update = async (id, user) => DB.updateUser(id, user);
  * @param {String} id - User id
  * @returns {User} User object that was removed.
  */
-const remove = async id => DB.removeUser(id);
+const remove = async (id: string): Promise<IUser> => DB.removeUser(id);
 
-module.exports = { getAll, get, create, update, remove };
+const _ = {
+  getAll,
+  get,
+  create,
+  update,
+  remove
+}
+
+export = _;
