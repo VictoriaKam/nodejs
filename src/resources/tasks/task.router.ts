@@ -1,8 +1,11 @@
-const router = require('express').Router( {mergeParams: true} );
-const Task = require('./task.model');
-const tasksService = require('./task.service');
+import { Request, Response } from 'express';
+import express = require('express');
+import * as tasksService from './task.service';
+import Task = require('./task.model');
 
-router.route('/').get(async (req, res) => {
+const router = express.Router( {mergeParams: true} );
+
+router.route('/').get(async (req: Request, res: Response): Promise<void> => {
   try {
     const tasks = await tasksService.getAll(req.params.boardId);
     res.json(tasks.map(Task.toResponse));
@@ -11,7 +14,7 @@ router.route('/').get(async (req, res) => {
   }
 });
 
-router.route('/:taskId').get(async (req, res) => {
+router.route('/:taskId').get(async (req: Request, res: Response): Promise<void> => {
   try {
     const task = await tasksService.get(req.params.boardId, req.params.taskId);
     res.json(Task.toResponse(task));
@@ -20,7 +23,7 @@ router.route('/:taskId').get(async (req, res) => {
   }
 });
 
-router.route('/').post(async (req, res) => {
+router.route('/').post(async (req: Request, res: Response): Promise<void> => {
   const task = await tasksService.create(req.params.boardId,
     new Task({
       title: req.body.title,
@@ -36,7 +39,7 @@ router.route('/').post(async (req, res) => {
   res.json(Task.toResponse(task));
 });
 
-router.route('/:taskId').put(async (req, res) => {
+router.route('/:taskId').put(async (req: Request, res: Response): Promise<void> => {
   try {
     const task = await tasksService.update(req.params.boardId, req.params.taskId,
       {
@@ -54,7 +57,7 @@ router.route('/:taskId').put(async (req, res) => {
   }
 });
 
-router.route('/:taskId').delete(async (req, res) => {
+router.route('/:taskId').delete(async (req: Request, res: Response): Promise<void> => {
   try {
     const task = await tasksService.remove(req.params.boardId, req.params.taskId);
     res.json(Task.toResponse(task));
@@ -63,4 +66,4 @@ router.route('/:taskId').delete(async (req, res) => {
   }
 });
 
-module.exports = router;
+export = router;

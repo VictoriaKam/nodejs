@@ -1,4 +1,6 @@
-const DB = require('../../common/inMemoryDb');
+import {ITask} from '../../types/interfaces';
+
+import * as DB from '../../common/inMemoryDb';
 
 /**
  * Represents all existing tasks in particular board.
@@ -6,7 +8,7 @@ const DB = require('../../common/inMemoryDb');
  * @param {String} boardId - Board id
  * @returns {Array.<object>} all tasks in particular board.
  */
-const getAll = async boardId => {
+const getAll = async (boardId: string): Promise<Array<ITask> | never> => {
   const tasks = await DB.getAllTasks(boardId);
   if (!tasks || tasks.length === 0) {
     throw new Error(`Tasks for Board with id ${boardId} were not found.`);
@@ -23,7 +25,7 @@ const getAll = async boardId => {
  * @throws {NotFoundError} When the task is not found.
  * @returns {Task} Task object.
  */
-const get = async (boardId, taskId) => {
+const get = async (boardId: string, taskId: string): Promise<ITask | never> => {
   const task = await DB.getTask(boardId, taskId);
   if (!task) {
     throw new Error(`Task with id ${taskId} in Board with id ${boardId} was not found.`);
@@ -39,7 +41,7 @@ const get = async (boardId, taskId) => {
  * @param {Task.<string>} Task object.
  * @returns {Task.<string>} newly created Task object.
  */
-const create = async (boardId, task) => DB.createTask(boardId, task);
+const create = async (boardId: string, task: ITask): Promise<ITask> => DB.createTask(boardId, task);
 
 /**
  * Updates a task with a specific id in a particular board.
@@ -49,7 +51,7 @@ const create = async (boardId, task) => DB.createTask(boardId, task);
  * @param {Task} Task - Taskd object with new values.
  * @returns {Task} updated Task object.
  */
-const update = async (boardId, taskId, task) => {
+const update = async (boardId: string, taskId: string, task: ITask): Promise<ITask | never> => {
   const updatedTask = await DB.updateTask(boardId, taskId, task);
   if (!updatedTask) {
     throw new Error(`Task with id ${taskId} for Board with id ${boardId} was not found.`);
@@ -65,7 +67,7 @@ const update = async (boardId, taskId, task) => {
  * @param {String} taskId - Task id
  * @returns {Task} Task object that was removed.
  */
-const remove = async (boardId, taskId) => {
+const remove = async (boardId: string, taskId: string): Promise<ITask | never> => {
   const removedTask = await  DB.removeTask(boardId, taskId);;
   if (!removedTask) {
     throw new Error(`Task with id ${taskId} for Board with id ${boardId} was not found.`);
@@ -74,4 +76,12 @@ const remove = async (boardId, taskId) => {
   return removedTask;
 }
 
-module.exports = { getAll, get, create, update, remove };
+const _ = {
+  getAll,
+  get,
+  create,
+  update,
+  remove
+}
+
+export = _;
