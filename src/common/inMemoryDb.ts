@@ -1,9 +1,10 @@
-const User = require('../resources/users/user.model');
-const Board = require('../resources/boards/board.model');
-const Task = require('../resources/tasks/task.model');
+import User = require('../resources/users/user.model');
+import Board = require('../resources/boards/board.model');
+import Task = require('../resources/tasks/task.model');
+import {IDB, IUser, IBoard, ITask} from '../types/interfaces';
 
 /** Database imitation. */
-const DB = {
+const DB: IDB = {
   Users: [],
   Boards: [],
   Tasks: [],
@@ -33,9 +34,9 @@ const DB = {
   }
 }
 
-const newUser1 = new User();
-const newUser2 = new User();
-const newUser3 = new User();
+const newUser1: IUser = new User();
+const newUser2: IUser = new User();
+const newUser3: IUser = new User();
 DB.Users.push(newUser1, newUser2, newUser3);
 
 /**
@@ -43,7 +44,7 @@ DB.Users.push(newUser1, newUser2, newUser3);
  * @async
  * @returns {Array.<object>} all users.
  */
-const getAllUsers = async () => DB.Users.slice(0);
+const getAllUsers = async (): Promise<Array<IUser>> => DB.Users.slice(0);
 
 /**
  * Retrieves a user by id.
@@ -51,7 +52,7 @@ const getAllUsers = async () => DB.Users.slice(0);
  * @param {String} id - User id
  * @returns {User} User object.
  */
-const getUser = async id => DB.Users.filter(el => el.id === id)[0];
+const getUser = async (id: string): Promise<IUser> => DB.Users.filter(el => el.id === id)[0];
 
 /**
  * Inserts a new user into DB.
@@ -59,7 +60,7 @@ const getUser = async id => DB.Users.filter(el => el.id === id)[0];
  * @param {User.<string>} User object.
  * @returns {User.<string>} newly created User object.
  */
-const createUser = async user => {
+const createUser = async (user: IUser): Promise<IUser> => {
   DB.Users.push(user);
   return user;
 };
@@ -71,7 +72,7 @@ const createUser = async user => {
  * @param {User} User - User object with new values.
  * @returns {User} updated User object.
  */
-const updateUser = async (id, user) => {
+const updateUser = async (id: string, user: IUser): Promise<IUser> => {
   const userOld = DB.Users.filter(el => el.id === id)[0];
   const userIndex = DB.Users.indexOf(userOld);
   DB.Users[userIndex].login = user.login;
@@ -86,7 +87,7 @@ const updateUser = async (id, user) => {
  * @param {String} id - User id
  * @returns {User} User object that was removed.
  */
-const removeUser = async id => {
+const removeUser = async (id: string): Promise<IUser> => {
   const user = DB.Users.filter(el => el.id === id)[0];
   DB.updateTaskForDeletedUser(user);
   const userIndex = DB.Users.indexOf(user);
@@ -94,7 +95,7 @@ const removeUser = async id => {
   return user;
 }
 
-const newBoard = new Board();
+const newBoard: IBoard = new Board();
 DB.Boards.push(newBoard);
 
 /**
@@ -102,7 +103,7 @@ DB.Boards.push(newBoard);
  * @async
  * @returns {Array.<object>} all boards.
  */
-const getAllBoards = async () => DB.Boards.slice(0);
+const getAllBoards = async (): Promise<Array<IBoard>> => DB.Boards.slice(0);
 
 /**
  * Retrieves a board by id.
@@ -110,7 +111,7 @@ const getAllBoards = async () => DB.Boards.slice(0);
  * @param {String} id - Board id
  * @returns {Board} Board object.
  */
-const getBoard = async id => DB.Boards.filter(el => el.id === id)[0];
+const getBoard = async (id: string): Promise<IBoard> => DB.Boards.filter(el => el.id === id)[0];
 
 /**
  * Inserts a new board into DB.
@@ -118,7 +119,7 @@ const getBoard = async id => DB.Boards.filter(el => el.id === id)[0];
  * @param {Board.<string>} Board object.
  * @returns {Board.<string>} newly created Board object.
  */
-const createBoard = async board => {
+const createBoard = async (board: IBoard): Promise<IBoard> => {
   DB.Boards.push(board);
   return board;
 };
@@ -130,7 +131,7 @@ const createBoard = async board => {
  * @param {Board} Board - Board object with new values.
  * @returns {Board} updated Board object.
  */
-const updateBoard = async (id, board) => {
+const updateBoard = async (id: string, board: IBoard): Promise<IBoard> => {
   const boardOld = DB.Boards.filter(el => el.id === id)[0];
   const boardIndex = DB.Boards.indexOf(boardOld);
   DB.Boards[boardIndex].title = board.title;
@@ -144,7 +145,7 @@ const updateBoard = async (id, board) => {
  * @param {String} id - Board id
  * @returns {Board} Board object that was removed.
  */
-const removeBoard = async id => {
+const removeBoard = async (id: string): Promise<IBoard> => {
   const board = DB.Boards.filter(el => el.id === id)[0];
   DB.removeTasksOfRemovedBoard(board);
   const boardIndex = DB.Boards.indexOf(board);
@@ -163,7 +164,7 @@ DB.Tasks.push(
  * @param {String} boardId - Board id
  * @returns {Array.<object>} all tasks in particular board.
  */
-const getAllTasks = async boardId => DB.Tasks.filter(el => el.boardId === boardId);
+const getAllTasks = async (boardId: string): Promise<Array<ITask>> => DB.Tasks.filter(el => el.boardId === boardId);
 
 /**
  * Retrieves a task by board id and task id.
@@ -172,7 +173,7 @@ const getAllTasks = async boardId => DB.Tasks.filter(el => el.boardId === boardI
  * @param {String} taskId - Task id
  * @returns {Task} Task object.
  */
-const getTask = async (boardId, taskId) =>
+const getTask = async (boardId: string, taskId: string): Promise<ITask> =>
   DB.Tasks
   .filter(el => el.boardId === boardId)
   .filter(task => task.id === taskId)[0];
@@ -184,7 +185,7 @@ const getTask = async (boardId, taskId) =>
  * @param {Task.<string>} Task object.
  * @returns {Task.<string>} newly created Task object.
  */
-const createTask = async (boardId, task) => {
+const createTask = async (boardId: string, task: ITask): Promise<ITask> => {
   DB.Tasks.push(task);
   return task;
 };
@@ -197,7 +198,7 @@ const createTask = async (boardId, task) => {
  * @param {Task} Task - Taskd object with new values.
  * @returns {Task} updated Task object.
  */
-const updateTask = async (boardId, taskId, task) => {
+const updateTask = async (boardId: string, taskId: string, task: ITask): Promise<ITask> => {
   const taskOld = DB.Tasks.filter(el => el.boardId === boardId).filter(elTask => elTask.id === taskId)[0];
   const taskIndex = DB.Tasks.indexOf(taskOld);
   if (DB.Tasks[taskIndex]) {
@@ -218,14 +219,14 @@ const updateTask = async (boardId, taskId, task) => {
  * @param {String} taskId - Task id
  * @returns {Task} Task object that was removed.
  */
-const removeTask = async (boardId, taskId) => {
+const removeTask = async (boardId: string, taskId: string): Promise<ITask> => {
   const task = DB.Tasks.filter(el => el.boardId === boardId).filter(elTask => elTask.id === taskId)[0];
   const taskIndex = DB.Tasks.indexOf(task);
   DB.Tasks.splice(taskIndex,1);
   return task;
 }
 
-module.exports = {
+const _ = {
   getAllUsers,
   getUser,
   createUser,
@@ -241,4 +242,6 @@ module.exports = {
   createTask,
   updateTask,
   removeTask
-};
+}
+
+export = _;
