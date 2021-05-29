@@ -1,24 +1,26 @@
-const boardsRepo = require('./board.memory.repository');
+import * as boardsRepo from './board.memory.repository';
+
+import {IBoard} from '../../types/interfaces';
 
 /**
  * Returns all existing boards.
  * @returns {Array.<object>} all boards.
  */
-const getAll = () => boardsRepo.getAll();
+const getAll = (): Promise<Array<IBoard>> => boardsRepo.getAll();
 
 /**
  * Retrieves a board by id.
  * @param {String} id - Board id
  * @returns {Board} Board object.
  */
-const get = id => boardsRepo.get(id);
+const get = (id: string): Promise<IBoard> => boardsRepo.get(id);
 
 /**
  * Inserts a new board into boards repo.
  * @param {Board.<string>} board object.
  * @returns {Board.<string>} newly created Board object.
  */
-const create = board => boardsRepo.create(board);
+const create = (board: IBoard): Promise<IBoard> => boardsRepo.create(board);
 
 /**
  * Updates a board with a specific id.
@@ -26,13 +28,21 @@ const create = board => boardsRepo.create(board);
  * @param {Board} board - Board object with new values.
  * @returns {Board} updated Board object.
  */
-const update = (id, board) => boardsRepo.update(id, board);
+const update = async (id: string, board: IBoard): Promise<IBoard> => boardsRepo.update(id, board);
 
 /**
  * Deletes a board with a specific id.
  * @param {String} id - Board id
  * @returns {Board} Board object that was removed.
  */
-const remove = id => boardsRepo.remove(id);
+const remove = (id: string): Promise<IBoard> => boardsRepo.remove(id);
 
-module.exports = { getAll, get, create, update, remove };
+const _ = {
+    getAll,
+    get,
+    create,
+    update,
+    remove
+  }
+
+  export = _;

@@ -1,11 +1,13 @@
-const DB = require('../../common/inMemoryDb');
+import {IBoard} from '../../types/interfaces';
+
+import * as DB from '../../common/inMemoryDb';
 
 /**
  * Represents all existing boards.
  * @async
  * @returns {Array.<object>} all boards.
  */
-const getAll = async () => DB.getAllBoards();
+const getAll = async (): Promise<Array<IBoard>> => DB.getAllBoards();
 
 /**
  * Retrieves a board by id.
@@ -14,7 +16,7 @@ const getAll = async () => DB.getAllBoards();
  * @returns {Board} Board object.
  * @throws {NotFoundError} When the board is not found.
  */
-const get = async id => {
+const get = async (id: string): Promise<IBoard | never> => {
   const board = await DB.getBoard(id);
 
   if (!board) {
@@ -30,7 +32,7 @@ const get = async id => {
  * @param {Board.<string>} Board object.
  * @returns {Board.<string>} newly created Board object.
  */
-const create = async board => DB.createBoard(board);
+const create = async (board: IBoard): Promise<IBoard> => DB.createBoard(board);
 
 /**
  * Updates a board with a specific id.
@@ -39,7 +41,7 @@ const create = async board => DB.createBoard(board);
  * @param {Board} Board - Board object with new values.
  * @returns {Board} updated Board object.
  */
-const update = async (id, board) => DB.updateBoard(id, board);
+const update = async (id: string, board: IBoard): Promise<IBoard> => DB.updateBoard(id, board);
 
 /**
  * Deletes a board with a specific id.
@@ -47,6 +49,14 @@ const update = async (id, board) => DB.updateBoard(id, board);
  * @param {String} id - Board id
  * @returns {Board} Board object that was removed.
  */
-const remove = async id => DB.removeBoard(id);
+const remove = async (id: string): Promise<IBoard> => DB.removeBoard(id);
 
-module.exports = { getAll,  get, create, update, remove };
+const _ = {
+  getAll,
+  get,
+  create,
+  update,
+  remove
+}
+
+export = _;
