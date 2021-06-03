@@ -6,6 +6,11 @@ import path = require('path');
 import YAML = require('yamljs');
 import fs = require('fs');
 import morgan = require('morgan');
+import {
+  StatusCodes,
+  getReasonPhrase,
+} from 'http-status-codes';
+import winston = require('winston');
 import userRouter = require('./resources/users/user.router');
 import boardRouter = require('./resources/boards/board.router');
 import taskRouter = require('./resources/tasks/task.router');
@@ -19,6 +24,22 @@ morgan.token('body', (req: Request, res: Response) => JSON.stringify(req.body));
 morgan.token('query', (req: Request, res: Response) => JSON.stringify(req.query));
 app.use(morgan(':method :url :status :response-time ms - :res[content-length] :body - :req[content-length] :query',
 {stream: createWriteStream('access.log')} ));
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.colorize(),
+    winston.format.cli()
+  ),
+  transports: [
+    new winston.transports.Console,
+    new winston.transports.File({ filename: 'error.log', level: 'error', format: winston.format.combine(
+      winston.format.uncolorize(),
+      winston.format.json()
+    ), }),
+    new winston.transports.File({ filename: 'combined.log' }),
+  ],
+});
 
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
@@ -38,9 +59,20 @@ app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use('/:boardId/tasks', taskRouter);
 
+// Here You can test that middleware will return 500 Internal Server Error for unhandled errors
+app.get('/error', (req, res) => {
+  throw new Error("500");
+})
+
 app.use((err: HttpException, _req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+
+  const error500 = StatusCodes.INTERNAL_SERVER_ERROR;
+
+  res.status(error500).send(getReasonPhrase(error500));
+
+  logger.error(`${error500} (${getReasonPhrase(error500)})`);
+
   next();
 });
 
