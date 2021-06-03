@@ -26,7 +26,7 @@ app.use(morgan(':method :url :status :response-time ms - :res[content-length] :b
 {stream: createWriteStream('access.log')} ));
 
 const logger = winston.createLogger({
-  level: 'info',
+  level: 'debug',
   format: winston.format.combine(
     winston.format.colorize(),
     winston.format.cli()
@@ -39,6 +39,11 @@ const logger = winston.createLogger({
     ), }),
     new winston.transports.File({ filename: 'combined.log' }),
   ],
+  exceptionHandlers: [
+    new winston.transports.File({ filename: 'exceptions.log' }),
+    new winston.transports.File({ filename: 'combined.log' })
+  ],
+  exitOnError: false,
 });
 
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
@@ -75,5 +80,19 @@ app.use((err: HttpException, _req: express.Request, res: express.Response, next:
 
   next();
 });
+
+process.on('unhandledRejection', (reason, p) => {
+  logger.debug(reason);
+});
+
+// To test unhandledRejection handler please uncomment next line
+// Promise.reject(Error('Unhandled Rejection Err'));
+
+process.on('uncaughtException', err => {
+  logger.debug(err);
+});
+
+// To test uncaughtException handler please uncomment next line
+// throw Error('Uncaught Exception Err');
 
 export = app;
