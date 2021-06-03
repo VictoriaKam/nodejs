@@ -1,3 +1,0 @@
-GET /error 500 16.026 ms - 21 {"title":"Very VERY VERY new task","order":1999,"description":"something interesting","userId":"06396aee-dc87-4c39-a451-89d39586ff70","boardId":"96cd500f-4297-4eed-8442-ce7a3df589e4","columnId":"123"} - 249 {}
-GET /error 500 1.726 ms - 21 {"title":"Very VERY VERY new task","order":1999,"description":"something interesting","userId":"06396aee-dc87-4c39-a451-89d39586ff70","boardId":"96cd500f-4297-4eed-8442-ce7a3df589e4","columnId":"123"} - 249 {}
-GET /boards?query1=1&query2=2 200 1.246 ms - 118 {"title":"Very VERY VERY new task","order":1999,"description":"something interesting","userId":"06396aee-dc87-4c39-a451-89d39586ff70","boardId":"96cd500f-4297-4eed-8442-ce7a3df589e4","columnId":"123"} - 249 {"query1":"1","query2":"2"}

@@ -4,26 +4,18 @@ import express = require('express');
 import swaggerUI = require('swagger-ui-express');
 import path = require('path');
 import YAML = require('yamljs');
-import fs = require('fs');
-import morgan = require('morgan');
 import {
   StatusCodes,
   getReasonPhrase,
 } from 'http-status-codes';
 import winston = require('winston');
+import stream = require('stream');
 import userRouter = require('./resources/users/user.router');
 import boardRouter = require('./resources/boards/board.router');
 import taskRouter = require('./resources/tasks/task.router');
 import HttpException = require('./types/error');
 
-const {createWriteStream} = fs;
-
 const app = express();
-
-morgan.token('body', (req: Request, res: Response) => JSON.stringify(req.body));
-morgan.token('query', (req: Request, res: Response) => JSON.stringify(req.query));
-app.use(morgan(':method :url :status :response-time ms - :res[content-length] :body - :req[content-length] :query',
-{stream: createWriteStream('access.log')} ));
 
 const logger = winston.createLogger({
   level: 'debug',
@@ -32,7 +24,7 @@ const logger = winston.createLogger({
     winston.format.cli()
   ),
   transports: [
-    new winston.transports.Console,
+    new winston.transports.File({ filename: 'request-response.log' }),
     new winston.transports.File({ filename: 'error.log', level: 'error', format: winston.format.combine(
       winston.format.uncolorize(),
       winston.format.json()
@@ -58,6 +50,16 @@ app.use('/', (req, res, next) => {
     return;
   }
   next();
+});
+
+app.use((req, res, next) => {
+  const { method, url, body, query } = req;
+  next();
+
+  stream.finished(res, () => {
+    const { statusCode } = res;
+    logger.info(`${method} url: ${url}; query: ${JSON.stringify(query)}; body: ${JSON.stringify(body)}; status code: ${statusCode}`)
+  })
 });
 
 app.use('/users', userRouter);
