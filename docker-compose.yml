@@ -2,8 +2,9 @@ version: '3'
 services:
     node:
         image: docker-basics-node
-        network_mode: bridge
         build: .
+        networks:
+            - node-postgres
         ports:
             - ${PORT}:${PORT}
         volumes:
@@ -15,8 +16,9 @@ services:
         restart: always
     postgres:
         image: docker-basics-postgres
-        network_mode: bridge
         build: ./database/
+        networks:
+            - node-postgres
         ports:
             - ${POSTGRES_PORT}:${POSTGRES_PORT}
         volumes:
@@ -26,3 +28,7 @@ services:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             POSTGRES_DB: ${POSTGRES_DB}
         restart: always
+networks:
+    node-postgres:
+        driver: bridge
+
