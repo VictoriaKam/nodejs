@@ -1,54 +1,64 @@
-import {IUser} from '../../types/interfaces';
+import { getRepository, getConnection } from 'typeorm';
 
-import * as DB from '../../common/inMemoryDb';
+import { User } from '../../entities/user.model';
+import { Task } from '../../entities/task.model'
 
-/**
- * Represents all existing users.
- * @async
- * @returns {Array.<object>} all users.
- */
-const getAll = async (): Promise<Array<IUser>> => DB.getAllUsers();
+const getAll = async (): Promise<Array<User>> => {
+  const usersRepository = getRepository(User);
+  return usersRepository.find()
+};
 
-/**
- * Retrieves a user by id.
- * @async
- * @param {String} id - User id
- * @returns {User} User object.
- */
-const get = async (id: string): Promise<IUser | never> => {
-  const user = await DB.getUser(id);
+const get = async (id: string): Promise<User | never> => {
+  const usersRepository = getRepository(User);
+  const res = await usersRepository.findOne(id);
 
-  if (!user) {
+  if (!res) {
     throw new Error(`The user with id ${id} was not found.`);
   }
 
-  return user;
+  return res;
 };
 
-/**
- * Inserts a new user into DB.
- * @async
- * @param {User.<string>} User object.
- * @returns {User.<string>} newly created User object.
- */
-const create = async (user: IUser): Promise<IUser> => DB.createUser(user);
+const create = async (user: User): Promise<User> => {
+  const usersRepository = getRepository(User);
+  const newUser = usersRepository.create(user);
+  const savedUser = usersRepository.save(newUser);
+  return savedUser;
+}
 
-/**
- * Updates a user with a specific id.
- * @async
- * @param {String} id - User id
- * @param {User} User - User object with new values.
- * @returns {User} updated User object.
- */
-const update = async (id: string, user: IUser): Promise<IUser> => DB.updateUser(id, user);
+const update = async (id: string, user: User): Promise<User> => {
+  const usersRepository = getRepository(User);
+  const res = await usersRepository.findOne(id);
 
-/**
- * Deletes a user with a specific id.
- * @async
- * @param {String} id - User id
- * @returns {User} User object that was removed.
- */
-const remove = async (id: string): Promise<IUser> => DB.removeUser(id);
+  if (!res) {
+    throw new Error(`The user with id ${id} was not found.`);
+  }
+
+  const updatedTask = await usersRepository.save({
+    ...res,
+    ...user
+  });
+
+  return updatedTask;
+}
+
+const remove = async (id: string): Promise<string> => {
+  const usersRepository = getRepository(User);
+  const deletionRes = await usersRepository.delete(id);
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(Task)
+    .set({ userId: null })
+    .where("userId = :id", { id })
+    .execute();
+
+  if (!deletionRes.affected) {
+    throw new Error(`The user with id ${id} was not found.`);
+  }
+
+  return `The user with id ${id} was deleted.`;
+}
 
 const _ = {
   getAll,
