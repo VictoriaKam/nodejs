@@ -1,5 +1,22 @@
 # RS School REST service
 
+## PostgreSQL
+
+To create migration:
+```
+yarn db:create
+```
+
+To run migration:
+```
+yarn db:run
+```
+
+To revert migration:
+```
+yarn db:revert
+```
+
 ## Docker
 
 To build application images with Docker:
