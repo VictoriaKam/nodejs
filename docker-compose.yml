@@ -1,0 +1,34 @@
+version: '3'
+services:
+    node:
+        image: docker-basics-node
+        build: .
+        networks:
+            - node-postgres
+        ports:
+            - ${PORT}:${PORT}
+        volumes:
+            - ./src:/user/app/src
+        depends_on:
+            - postgres
+        environment:
+            - PORT=4000
+        restart: always
+    postgres:
+        image: docker-basics-postgres
+        build: ./database/
+        networks:
+            - node-postgres
+        ports:
+            - ${POSTGRES_PORT}:${POSTGRES_PORT}
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+        restart: always
+networks:
+    node-postgres:
+        driver: bridge
+
