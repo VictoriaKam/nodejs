@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import express = require('express');
+import { hashSync } from 'bcrypt';
 import * as usersService from './user.service';
 import { User } from '../../entities/user.model';
 
@@ -21,6 +22,7 @@ router.route('/:id').get(async (req: Request, res: Response): Promise<void> => {
 });
 
 router.route('/').post(async (req: Request, res: Response): Promise<void> => {
+  req.body.password = hashSync(req.body.password, 10);
   const user = await usersService.create(req.body);
   res.status(201);
   res.send(User.toResponse(user));
