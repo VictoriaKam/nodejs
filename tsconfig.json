@@ -1,20 +1,15 @@
 {
-
-    "compileOnSave": true,
-    "compilerOptions": {
-        "module": "commonjs",
-        "noEmitOnError": true,
-        "target": "es2020",
-        "removeComments": true,
-        "outDir": "js",
-        "sourceMap": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-    },
-    "exclude":[
-        "node_modules"
-    ],
-    "include": [
-        "./src//*.ts"
-      ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true
+  }
 }
