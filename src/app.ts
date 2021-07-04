@@ -1,5 +1,4 @@
-import { Request, Response } from 'express';
-
+import { Request, Response, NextFunction } from 'express';
 import express = require('express');
 import swaggerUI = require('swagger-ui-express');
 import path = require('path');
@@ -10,6 +9,8 @@ import {
 } from 'http-status-codes';
 import winston = require('winston');
 import stream = require('stream');
+import loginRouter = require('./resources/login/login.router');
+import { validateSession } from './middleware/validate-session';
 import userRouter = require('./resources/users/user.router');
 import boardRouter = require('./resources/boards/board.router');
 import taskRouter = require('./resources/tasks/task.router');
@@ -62,6 +63,12 @@ app.use((req, res, next) => {
   })
 });
 
+app.use('/login', loginRouter);
+
+app.use((req, res, next) => {
+  validateSession(req, res, next)
+});
+
 app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use('/:boardId/tasks', taskRouter);
@@ -71,7 +78,7 @@ app.get('/error', (req, res) => {
   throw new Error("500");
 })
 
-app.use((err: HttpException, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: HttpException, _req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
 
   const error500 = StatusCodes.INTERNAL_SERVER_ERROR;

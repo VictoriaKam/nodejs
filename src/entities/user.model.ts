@@ -13,4 +13,9 @@ export class User {
 
    @Column('text')
    password = '';
+
+   static toResponse(user: { id: string, name: string, login: string }): { id: string, name: string, login: string } {
+      const { id, name, login } = user;
+      return { id, name, login };
+    }
 }
