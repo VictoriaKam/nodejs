@@ -1,30 +1,26 @@
-import { ConnectionOptions } from 'typeorm';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import * as dotenv from 'dotenv';
 
 import * as path from 'path';
 
 dotenv.config({
-    path: path.join(__dirname, '../../env')
+    path: path.join(__dirname, '../../.env')
 });
 
-const config = {
+const config: TypeOrmModuleOptions = {
     type: 'postgres',
     name: 'default',
-    synchronize: false,
+    synchronize: true,
     host: process.env['POSTGRES_HOST'],
-    port: process.env['POSTGRES_PORT'],
+    port: +process.env['POSTGRES_PORT'],
     username: process.env['POSTGRES_USER'],
     password: process.env['POSTGRES_PASSWORD'],
     database: process.env['POSTGRES_DB'],
-    autoReconnect: true,
-    reconnectTries: Number.MAX_VALUE,
-    reconnectionInterval: 1000,
-    entities: ['src/entities/**/*.ts'],
-    migrations: ['src/migration/*.ts'],
+    entities: ['dist/**/entities/*.js'],
+    migrations: ['dist/migration/*.js'],
     cli: {
-        migrationsDir: 'src/migration'
+        migrationsDir: 'dist/migration'
     }
 };
-
-export = config as ConnectionOptions;
+ export default config;
